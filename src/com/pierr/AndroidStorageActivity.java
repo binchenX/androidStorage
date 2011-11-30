@@ -28,6 +28,7 @@ public class AndroidStorageActivity extends Activity {
 	
 	TextView mTextPrivateStroage = null;
 	TextView mTextPublicStorage  = null;
+	TextView mTextExternalDirs = null;
 	
 	private static String TAG = "AndroidStorage";
 	
@@ -44,10 +45,13 @@ public class AndroidStorageActivity extends Activity {
    
         
         mTextPrivateStroage = (TextView)findViewById(R.id.privateStorage);
+        mTextPublicStorage = (TextView)findViewById(R.id.externalPublicStorage);
+        mTextExternalDirs = (TextView)findViewById(R.id.externalFileDir);
         
         writeAndReadPrivateStorage();
         
-       // writeAndreadPublicStorage();
+        writeExternalFilesDir();
+        
         
         createExternalStoragePublicPicture();
         
@@ -55,6 +59,48 @@ public class AndroidStorageActivity extends Activity {
     
     }
     
+    private void  writeExternalFilesDir()
+    {
+    	
+    	File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    	if(dir.exists())
+    	{
+    		boolean ret = dir.mkdir();
+    		{
+    			Log.i(TAG, "Fail to create  " + dir.getAbsolutePath());
+    		}
+    		
+    		
+    	}
+    	
+    	mTextExternalDirs.setText(dir.getAbsolutePath());
+    	
+    	//go a heard to create pic there
+    	
+    	try {
+    	    File file = new File(dir, "DemoPicture.jpg");
+
+	        // Very simple code to copy a picture from the application's
+	        // resource into the external file.  Note that this code does
+	        // no error checking, and assumes the picture is small (does not
+	        // try to copy it in chunks).  Note that if external storage is
+	        // not currently mounted this will silently fail.
+	        InputStream is = getResources().openRawResource(R.drawable.icon);
+	        OutputStream os = new FileOutputStream(file);
+	        byte[] data = new byte[is.available()];
+	        is.read(data);
+	        os.write(data);
+	        is.close();
+	        os.close();
+    	}catch(Exception ex)
+    	{
+    		ex.printStackTrace();
+    	}
+    	
+    	
+    	
+    	
+    }
     
     private void writeAndReadPrivateStorage() 
     {
@@ -121,6 +167,8 @@ public class AndroidStorageActivity extends Activity {
     	    File path = Environment.getExternalStoragePublicDirectory(
     	            Environment.DIRECTORY_PICTURES);
     	    File file = null;
+    	    
+    	    mTextPublicStorage.setText(path.getAbsolutePath());
 
     	    try {
     	        // Make sure the Pictures directory exists.
